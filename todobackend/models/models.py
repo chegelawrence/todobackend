@@ -1,4 +1,5 @@
 from todobackend import db
+from todobackend import ma
 
 class Todos(db.Model):
     __tablename__ = 'todos'
@@ -8,3 +9,8 @@ class Todos(db.Model):
 
     def __repr__(self):
         return f"Todo('{self.id},'{self.title}','{self.completed}')"
+
+
+class TodoSchema(ma.Schema):
+    class Meta:
+        fields = ('id','title','completed')
