@@ -1,4 +1,4 @@
-from flask import Flask,jsonify
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from todobackend.config.config import Config
 from flask_cors import CORS

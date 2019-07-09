@@ -2,8 +2,6 @@ from todobackend import create_app
 from flask import jsonify, request
 from todobackend import db
 from todobackend.models.models import Todos,TodoSchema
-from todobackend.utils.return_404 import return_404
-
 
 app = create_app()
 
@@ -39,7 +37,11 @@ def addTodo():
 #get a single todo
 @app.route('/<int:id>')
 def singleTodo(id):
-    todo = Todos.query.get_or_404(int(id))
+    todo = Todos.query.get(int(id))
+    if not todo:
+       return jsonify({
+           'msg':'Resource not found'
+       }), 404
     response = todo_schema.jsonify(todo)
     response.status_code = 200
     return response
@@ -47,6 +49,10 @@ def singleTodo(id):
 @app.route('/<int:id>',methods=['PUT'])
 def updateTodo(id):
     todo = Todos.query.get(id)
+    if not todo:
+        return jsonify({
+            'msg':'Resource not found'
+        }), 404
     if todo.completed == 0:
         todo.completed = 1
     else:
@@ -57,14 +63,18 @@ def updateTodo(id):
 #delete todo
 @app.route('/<int:id>',methods=['DELETE'])
 def deleteTodo(id):
-    todo = Todos.query.get_or_404(int(id))
+    todo = Todos.query.get(int(id))
+    if not todo:
+        return jsonify({
+            'msg':'Resource not found'
+        }), 404
     try:
         db.session.delete(todo)
         db.session.commit()
         return todo_schema.jsonify(todo)
     except Exception as e:
         response = jsonify({'msg':'Internal server error'})
-        response.status_code = status_code
+        response.status_code = 500
         return response
 
 if __name__ == '__main__':
