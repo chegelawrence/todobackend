@@ -73,8 +73,7 @@ def deleteTodo(id):
         db.session.commit()
         return todo_schema.jsonify(todo)
     except Exception as e:
-        response = jsonify({'msg':'Internal server error'})
-        response.status_code = 500
+        response = jsonify({'msg':'Internal server error','status_code':500})
         return response
 
 if __name__ == '__main__':
