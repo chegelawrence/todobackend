@@ -1,5 +1,4 @@
-from flask import Blueprint
-from flask import jsonify,request
+from flask import jsonify,request,Blueprint
 from todobackend import db
 from todobackend.models.models import Todos,TodoSchema
 from time import ctime
@@ -23,7 +22,6 @@ def addTodo():
     newTodo = Todos(title=todo_title)
     try:
         db.session.add(newTodo)
-        print(ctime())
         db.session.commit()
 
         response = todo_schema.jsonify(newTodo)
@@ -48,7 +46,7 @@ def singleTodo(id):
 #update todo completed status
 @todos_blueprint.route('/<int:id>',methods=['PUT'])
 def updateTodo(id):
-    todo = Todos.query.get(id)
+    todo = Todos.query.get(int(id))
     if not todo:
         return jsonify({
             'msg':'Resource not found'
