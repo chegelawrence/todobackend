@@ -1,6 +1,6 @@
 from flask import jsonify,request,Blueprint
 from todobackend import db,blacklist,jwt
-from todobackend.models.models import Todos,TodoSchema
+from todobackend.models.models import Todos,TodoSchema,Users
 from time import ctime
 from flask_jwt_extended import jwt_required,get_jwt_identity
 

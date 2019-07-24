@@ -22,12 +22,12 @@ def login():
 	if not password:
 		return jsonify({'error':{'msg':'No password in request'}}),400
 
-	user = Users.query.filter_by(username=str(username).capitalize()).first()
+	user = Users.query.filter_by(email=username.lower()).first()
 	if not user:
 		return jsonify({'error':{'msg':'Not authorized'}}),401
 	if check_password_hash(user.password,password):
 		#correct password, create access token and return
-		access_token = create_access_token(identity={'id':user.id,'username':user.username},expires_delta=datetime.timedelta(days=2))
+		access_token = create_access_token(identity={'id':user.id,'username':user.username,'email':user.email},expires_delta=datetime.timedelta(days=2))
 		return jsonify({'access_token':access_token,'logged_in':True})
 	else:
 		return jsonify({'error':{'msg':'Wrong password'}}),401
@@ -39,10 +39,13 @@ def register():
 	if not request.is_json:
 		return jsonify({'error':{'msg':'Bad request'}}),400
 	username = request.json.get('username',None)
+	email = request.json.get('email',None)
 	password = request.json.get('password',None)
 	confirm_password = request.json.get('confirm_password',None)
 	if not username:
 		return jsonify({'error':{'msg':'No username in request'}}),400
+	if not email:
+		return jsonify({'error':{'msg':'No email in request'}}),400
 	if not password:
 		return jsonify({'error':{'msg':'No password in request'}}),400
 	if not confirm_password:
@@ -50,7 +53,7 @@ def register():
 
 	if password == confirm_password:
 		password_hash = generate_password_hash(password)
-		user = Users(username=username.capitalize(),password=password_hash)
+		user = Users(username=username.capitalize(),email=email.lower(),password=password_hash)
 		#add user to db
 		db.session.add(user)
 		#commit changes to the database
